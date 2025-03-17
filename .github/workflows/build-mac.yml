@@ -30,10 +30,16 @@ jobs:
         fi
     - name: Build with PyInstaller
       run: |
-        # Replace with your actual main script name
-        pyinstaller --onefile main.py
+        # Create a macOS .app bundle instead of a plain executable
+        pyinstaller --clean --windowed --name "ThumbnailGenerator" --osx-bundle-identifier=com.yourcompany.thumbnailgenerator main.py
+        # Make sure the app is executable
+        chmod +x dist/ThumbnailGenerator.app/Contents/MacOS/ThumbnailGenerator
+        # Create a zip of the .app bundle to preserve permissions
+        cd dist && zip -r ThumbnailGenerator.app.zip ThumbnailGenerator.app && cd ..
     - name: Upload macOS build
       uses: actions/upload-artifact@v4
       with:
         name: macos-app
-        path: dist/
+        path: |
+          dist/ThumbnailGenerator.app.zip
+          dist/ThumbnailGenerator.app
